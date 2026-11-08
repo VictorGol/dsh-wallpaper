@@ -56,14 +56,16 @@ window.__ModuleLoader__.load({
     };
 
     const CSS = [
-      '.dshwp-btn{position:fixed;top:11px;left:max(88px,calc(var(--dsh-frame-leading-clearance,0px) + 8px));z-index:30;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border:0;border-radius:8px;cursor:pointer;color:#fff;background:linear-gradient(140deg,var(--dsw-static-violet-400,#a78bfa),var(--dsw-static-violet-600,#7c3aed));box-shadow:0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.22);-webkit-app-region:no-drag;transition:filter .12s ease,transform .12s ease}',
+      '.dshwp-btn{position:fixed;top:11px;left:88px;z-index:30;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border:0;border-radius:8px;cursor:pointer;color:#fff;background:linear-gradient(140deg,var(--dsw-static-violet-400,#a78bfa),var(--dsw-static-violet-600,#7c3aed));box-shadow:0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.22);-webkit-app-region:no-drag;transition:filter .12s ease,transform .12s ease}',
       '.dshwp-btn:hover{filter:brightness(1.12)}',
       '.dshwp-btn:active{transform:scale(.94)}',
       '.dshwp-btn:focus-visible{outline:2px solid var(--dsw-static-violet-400,#a78bfa);outline-offset:2px}',
       '.dshwp-btn[data-on=true]{box-shadow:0 0 0 2px rgba(167,139,250,.42),0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.22)}',
-      'html[data-fullscreen] .dshwp-btn{left:max(12px,calc(var(--dsh-frame-leading-clearance,0px) + 8px))}',
-      '.dshwp-panel{position:fixed;top:47px;left:max(88px,calc(var(--dsh-frame-leading-clearance,0px) + 8px));z-index:31;box-sizing:border-box;width:296px;max-width:calc(100vw - 24px);padding:14px;border:.5px solid var(--dsw-alias-border-l3);border-radius:14px;background:var(--dsw-specific-menu);-webkit-backdrop-filter:blur(24px) saturate(1.6);backdrop-filter:blur(24px) saturate(1.6);box-shadow:0 12px 32px rgba(0,0,0,.3);color:var(--dsw-alias-label-primary);font-size:13px;line-height:20px;-webkit-app-region:no-drag}',
-      'html[data-fullscreen] .dshwp-panel{left:max(12px,calc(var(--dsh-frame-leading-clearance,0px) + 8px))}',
+      /* The sidebar owns the space the button sits in: collapsed means no brand row. */
+      '[data-sidebar-collapsed] .dshwp-btn,[data-sidebar-collapsed] .dshwp-panel{display:none}',
+      /* Off macOS there is no safe fallback spot before the brand row is measured. */
+      'html:not([data-platform=darwin]) .dshwp-btn[data-ready=false],html:not([data-platform=darwin]) .dshwp-panel[data-ready=false]{display:none}',
+      '.dshwp-panel{position:fixed;top:47px;left:88px;z-index:31;box-sizing:border-box;width:296px;max-width:calc(100vw - 24px);padding:14px;border:.5px solid var(--dsw-alias-border-l3);border-radius:14px;background:var(--dsw-specific-menu);-webkit-backdrop-filter:blur(24px) saturate(1.6);backdrop-filter:blur(24px) saturate(1.6);box-shadow:0 12px 32px rgba(0,0,0,.3);color:var(--dsw-alias-label-primary);font-size:13px;line-height:20px;-webkit-app-region:no-drag}',
       '.dshwp-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px}',
       '.dshwp-title{margin:0;font-size:14px;font-weight:600;line-height:22px}',
       '.dshwp-x{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:0;border-radius:6px;background:transparent;color:var(--dsw-alias-label-tertiary);cursor:pointer}',
@@ -178,10 +180,74 @@ window.__ModuleLoader__.load({
       const [ready, setReady] = useState(false);
       const [notice, setNotice] = useState('');
       const [dropping, setDropping] = useState(false);
+      const [pos, setPos] = useState(null);
       const rootRef = useRef(null);
       const fileRef = useRef(null);
 
       const url = useMemo(() => (image ? URL.createObjectURL(image) : null), [image]);
+
+      /**
+       * The button belongs right of the sidebar's brand wordmark, and no slot
+       * allocates that space. The anchor is measured instead: the sidebar toggle
+       * locates the sidebar and its brand row, the brand's identity box ends the
+       * wordmark, and the row supplies the vertical center. The window-chrome
+       * position is only a fallback; off macOS the unmeasured button stays hidden.
+       */
+      useEffect(() => {
+        let frame = 0;
+        let ro = null;
+        let mo = null;
+
+        const measure = () => {
+          const toggle = document.querySelector('[data-sidebar-toggle]');
+          const toggleRow = toggle && toggle.closest('[data-window-drag]');
+          const sidebar = toggleRow && toggleRow.parentElement;
+          if (!sidebar) return;
+          const rows = Array.from(sidebar.children).filter((el) => el.hasAttribute('data-window-drag'));
+          const row = rows.find((el) => el !== toggleRow) || toggleRow;
+          if (!row) return;
+          const brand = Array.from(row.children).find((el) => !el.hasAttribute('data-sidebar-toggle') && !el.querySelector('[data-sidebar-toggle]'));
+          if (!brand) return;
+          const anchor = (brand.firstElementChild || brand).getBoundingClientRect();
+          const box = row.getBoundingClientRect();
+          if (box.width < 140 || anchor.width === 0) return;
+          const left = Math.min(Math.max(anchor.right + 8, box.left + 8), box.right - 36);
+          const top = box.top + Math.max(0, (box.height - 28) / 2);
+          setPos((prev) => (prev && Math.abs(prev.left - left) < 0.5 && Math.abs(prev.top - top) < 0.5 ? prev : { left, top }));
+        };
+
+        const schedule = () => {
+          if (frame) return;
+          frame = requestAnimationFrame(() => {
+            frame = requestAnimationFrame(() => {
+              frame = 0;
+              measure();
+            });
+          });
+        };
+
+        schedule();
+        window.addEventListener('resize', schedule);
+        const toggle = document.querySelector('[data-sidebar-toggle]');
+        const toggleRow = toggle && toggle.closest('[data-window-drag]');
+        const sidebar = toggleRow && toggleRow.parentElement;
+        if (sidebar) {
+          if (typeof ResizeObserver === 'function') {
+            ro = new ResizeObserver(schedule);
+            ro.observe(sidebar);
+          }
+          if (typeof MutationObserver === 'function') {
+            mo = new MutationObserver(schedule);
+            mo.observe(sidebar, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+          }
+        }
+        return () => {
+          if (frame) cancelAnimationFrame(frame);
+          window.removeEventListener('resize', schedule);
+          if (ro) ro.disconnect();
+          if (mo) mo.disconnect();
+        };
+      }, []);
 
       useEffect(() => {
         let alive = true;
@@ -290,6 +356,8 @@ window.__ModuleLoader__.load({
         className: 'dshwp-panel',
         role: 'dialog',
         'aria-label': t('title'),
+        'data-ready': pos ? 'true' : 'false',
+        style: pos ? { left: pos.left + 'px', top: (pos.top + 36) + 'px' } : undefined,
       }, [
         h('div', { className: 'dshwp-head', key: 'head' }, [
           h('h2', { className: 'dshwp-title', key: 'title' }, t('title')),
@@ -362,6 +430,8 @@ window.__ModuleLoader__.load({
             'aria-haspopup': 'dialog',
             'aria-expanded': open ? 'true' : 'false',
             'data-on': image ? 'true' : 'false',
+            'data-ready': pos ? 'true' : 'false',
+            style: pos ? { left: pos.left + 'px', top: pos.top + 'px' } : undefined,
             onClick: () => setOpen((value) => !value),
           }, icon),
           panel));
