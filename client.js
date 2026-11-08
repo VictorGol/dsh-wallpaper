@@ -74,11 +74,11 @@ window.__ModuleLoader__.load({
     };
 
     const CSS = [
-      `.dshwp-btn{position:fixed;top:11px;left:88px;z-index:30;display:inline-flex;align-items:center;justify-content:center;width:${BUTTON_SIZE}px;height:${BUTTON_SIZE}px;padding:0;border:0;border-radius:50%;cursor:pointer;color:#fff;background:linear-gradient(140deg,color-mix(in srgb,var(--dsw-static-violet-400,#a78bfa) 80%,#fff),var(--dsw-static-violet-400,#a78bfa));box-shadow:0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.35);-webkit-app-region:no-drag;transition:filter .12s ease,transform .12s ease}`,
+      `.dshwp-btn{position:fixed;top:11px;left:88px;z-index:30;display:inline-flex;align-items:center;justify-content:center;width:${BUTTON_SIZE}px;height:${BUTTON_SIZE}px;padding:0;border:0;border-radius:50%;cursor:pointer;color:#fff;background:var(--dsw-alias-button-info-fill,#4176e6);box-shadow:0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.35);-webkit-app-region:no-drag;transition:filter .12s ease,transform .12s ease}`,
       '.dshwp-btn:hover{filter:brightness(1.07)}',
       '.dshwp-btn:active{transform:scale(.94)}',
-      '.dshwp-btn:focus-visible{outline:2px solid var(--dsw-static-violet-400,#a78bfa);outline-offset:2px}',
-      '.dshwp-btn[data-on=true]{box-shadow:0 0 0 2px rgba(196,181,253,.55),0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.35)}',
+      '.dshwp-btn:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary,#4176e6);outline-offset:2px}',
+      '.dshwp-btn[data-on=true]{box-shadow:0 0 0 2px color-mix(in srgb,var(--dsw-alias-button-info-fill,#4176e6) 45%,transparent),0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.35)}',
       /* The sidebar owns the space the button sits in: collapsed means no brand row. */
       '[data-sidebar-collapsed] .dshwp-btn,[data-sidebar-collapsed] .dshwp-panel{display:none}',
       /* Off macOS there is no safe fallback spot before the brand row is measured. */
@@ -90,18 +90,18 @@ window.__ModuleLoader__.load({
       '.dshwp-x:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}',
       '.dshwp-preview{position:relative;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;aspect-ratio:16/9;border:.5px dashed var(--dsw-alias-border-l3);border-radius:10px;background-color:var(--dsw-alias-bg-layer-1);background-position:center;background-size:cover;overflow:hidden;color:var(--dsw-alias-label-tertiary);font-size:12px;user-select:none}',
       '.dshwp-preview[data-filled=true]{border-style:solid;color:transparent}',
-      '.dshwp-preview[data-drop=true]{border-color:var(--dsw-static-violet-400,#a78bfa);box-shadow:inset 0 0 0 2px rgba(167,139,250,.35)}',
+      '.dshwp-preview[data-drop=true]{border-color:var(--dsw-alias-button-info-fill,#4176e6);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--dsw-alias-button-info-fill,#4176e6) 35%,transparent)}',
       '.dshwp-actions{display:flex;gap:8px;margin-top:12px}',
       '.dshwp-primary,.dshwp-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 12px;border-radius:8px;font:inherit;font-size:13px;font-weight:500;cursor:pointer}',
-      '.dshwp-primary{flex:1;border:0;color:#fff;background:linear-gradient(140deg,var(--dsw-static-violet-400,#a78bfa),var(--dsw-static-violet-600,#7c3aed));box-shadow:0 1px 2px rgba(15,10,30,.25)}',
+      '.dshwp-primary{flex:1;border:0;color:#fff;background:var(--dsw-alias-button-info-fill,#4176e6);box-shadow:0 1px 2px rgba(15,10,30,.25)}',
       '.dshwp-primary:hover{filter:brightness(1.1)}',
-      '.dshwp-primary:focus-visible,.dshwp-ghost:focus-visible{outline:2px solid var(--dsw-static-violet-400,#a78bfa);outline-offset:2px}',
+      '.dshwp-primary:focus-visible,.dshwp-ghost:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary,#4176e6);outline-offset:2px}',
       '.dshwp-ghost{border:.5px solid var(--dsw-alias-border-l3);background:transparent;color:var(--dsw-alias-label-secondary)}',
       '.dshwp-ghost:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}',
       '.dshwp-ghost:disabled{opacity:.45;cursor:default}',
       '.dshwp-row{display:flex;align-items:center;gap:10px;margin-top:14px}',
       '.dshwp-label{flex:none;color:var(--dsw-alias-label-secondary)}',
-      '.dshwp-range{flex:1;min-width:0;accent-color:var(--dsw-static-violet-600,#7c3aed);cursor:pointer}',
+      '.dshwp-range{flex:1;min-width:0;accent-color:var(--dsw-alias-button-info-fill,#4176e6);cursor:pointer}',
       '.dshwp-value{flex:none;width:40px;text-align:right;font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-primary)}',
       '.dshwp-hint{margin:10px 0 0;color:var(--dsw-alias-label-tertiary);font-size:11px;line-height:16px}',
       '.dshwp-notice{margin:8px 0 0;color:var(--dsw-alias-state-error-primary);font-size:11px;line-height:16px}',
