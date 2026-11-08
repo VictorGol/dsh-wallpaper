@@ -74,11 +74,11 @@ window.__ModuleLoader__.load({
     };
 
     const CSS = [
-      `.dshwp-btn{position:fixed;top:11px;left:88px;z-index:30;display:inline-flex;align-items:center;justify-content:center;width:${BUTTON_SIZE}px;height:${BUTTON_SIZE}px;padding:0;border:0;border-radius:50%;cursor:pointer;color:#fff;background:var(--dsw-alias-button-info-fill,#4176e6);box-shadow:0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.35);-webkit-app-region:no-drag;transition:filter .12s ease,transform .12s ease}`,
-      '.dshwp-btn:hover{filter:brightness(1.07)}',
+      `.dshwp-btn{position:fixed;top:11px;left:88px;z-index:30;display:inline-flex;align-items:center;justify-content:center;width:${BUTTON_SIZE}px;height:${BUTTON_SIZE}px;padding:0;border:0;border-radius:50%;cursor:pointer;color:var(--dsw-alias-label-primary-foreground,#fff);background:var(--dsw-alias-button-primary-fill,#0f1115);box-shadow:0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px color-mix(in srgb,currentColor 14%,transparent);-webkit-app-region:no-drag;transition:filter .12s ease,transform .12s ease}`,
+      '.dshwp-btn:hover{opacity:.86}',
       '.dshwp-btn:active{transform:scale(.94)}',
       '.dshwp-btn:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary,#4176e6);outline-offset:2px}',
-      '.dshwp-btn[data-on=true]{box-shadow:0 0 0 2px color-mix(in srgb,var(--dsw-alias-button-info-fill,#4176e6) 45%,transparent),0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.35)}',
+      '.dshwp-btn[data-on=true]{box-shadow:0 0 0 2px color-mix(in srgb,currentColor 30%,transparent),0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px color-mix(in srgb,currentColor 14%,transparent)}',
       /* The sidebar owns the space the button sits in: collapsed means no brand row. */
       '[data-sidebar-collapsed] .dshwp-btn,[data-sidebar-collapsed] .dshwp-panel{display:none}',
       /* Off macOS there is no safe fallback spot before the brand row is measured. */

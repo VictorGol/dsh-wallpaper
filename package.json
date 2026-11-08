@@ -1,8 +1,8 @@
 {
   "name": "dsh-wallpaper",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
-  "description": "A round button in DSH's accent color that picks a local image as the window wallpaper and sets its opacity.",
+  "description": "A round button beside the sidebar wordmark that picks a local image as the window wallpaper and sets its opacity.",
   "license": "MIT",
   "keywords": [
     "dsh",

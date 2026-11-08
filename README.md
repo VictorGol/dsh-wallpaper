@@ -1,12 +1,12 @@
 # dsh-wallpaper
 
-给 [DeepSeek Harness](https://github.com/deepseek-ai) 换一张自己的背景壁纸：侧边栏 `deepseek HARNESS` 字标右侧多出一个圆形按钮（用 DSH 自己的强调色），点一下选图，壁纸按 **70% 不透明度**铺满整个窗口，滑杆随时可调。
+给 [DeepSeek Harness](https://github.com/deepseek-ai) 换一张自己的背景壁纸：侧边栏 `deepseek HARNESS` 字标右侧多出一个圆形按钮（深色主题白底黑字、浅色主题黑底白字），点一下选图，壁纸按 **70% 不透明度**铺满整个窗口，滑杆随时可调。
 
 <p align="center"><img src="icon.svg" width="88" height="88" alt="dsh-wallpaper 图标"></p>
 
 ## 功能
 
-- **字标旁的圆形按钮**：颜色取 DSH 主题的强调色（`--dsw-alias-button-info-fill`，和发送按钮同一个蓝），注册在 `shell.overlay` 槽位，贴在侧边栏 `deepseek HARNESS` 字标右侧；侧边栏收起时随品牌行一起隐藏，不占用也不替换任何内置控件
+- **字标旁的圆形按钮**：跟随主题反转——深色主题用 `--dsw-alias-button-primary-fill` 的白底配 `--dsw-alias-label-primary-foreground` 的黑图标，浅色主题反过来（黑底白字），注册在 `shell.overlay` 槽位，贴在侧边栏 `deepseek HARNESS` 字标右侧；侧边栏收起时随品牌行一起隐藏，不占用也不替换任何内置控件
 - **选一张本地图片**：点「选择图片」，或直接把图片拖进预览框
 - **不透明度 0–100%**：默认 70%，拖动即时生效
 - **面板自动半透明**：壁纸存在时，会话区、侧边栏、右栏、底栏一起半透明，让壁纸透出来；点「移除」立刻恢复原来的纯色界面
@@ -58,7 +58,7 @@ MIT · 详见 [LICENSE](LICENSE)
 
 ## English
 
-A wallpaper picker for DeepSeek Harness: a round button in DSH's own accent color right of the sidebar's `deepseek HARNESS` wordmark opens a small panel where you choose a local image, and the image becomes the app wallpaper at **70% opacity** (adjustable 0–100%). It hides with the sidebar.
+A wallpaper picker for DeepSeek Harness: a round button right of the sidebar's `deepseek HARNESS` wordmark (white on dark themes, black on light ones) opens a small panel where you choose a local image, and the image becomes the app wallpaper at **70% opacity** (adjustable 0–100%). It hides with the sidebar.
 
 - **Local only**: the image blob and opacity live in IndexedDB; nothing is uploaded and no network request is made.
 - **Translucent surfaces**: while a wallpaper is set, the plugin stacks a `--dsw-alias-bg-base` override through `ctx.theme.overrideTokens` so the frame, conversation, sidebar, right bar and bottom row let the image through. Removing the wallpaper disposes the layer and restores the default surfaces.
