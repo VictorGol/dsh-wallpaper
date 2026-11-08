@@ -1,0 +1,55 @@
+{
+  "name": "dsh-wallpaper",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A purple button beside the window controls that picks a local image as the DSH window wallpaper and sets its opacity.",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "wallpaper",
+    "background"
+  ],
+  "engines": {
+    "dsh": ">=0.2.0-rc.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VictorGol/dsh-wallpaper.git"
+  },
+  "homepage": "https://github.com/VictorGol/dsh-wallpaper#readme",
+  "bugs": {
+    "url": "https://github.com/VictorGol/dsh-wallpaper/issues"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "scripts": {
+    "check": "node --check client.js && node --input-type=module -e \"await import('./index.js')\""
+  }
+}
