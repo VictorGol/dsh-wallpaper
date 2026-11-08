@@ -1,6 +1,6 @@
 {
   "name": "dsh-wallpaper",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "A purple button beside the window controls that picks a local image as the DSH window wallpaper and sets its opacity.",
   "license": "MIT",
