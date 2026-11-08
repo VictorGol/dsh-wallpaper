@@ -14,6 +14,9 @@ window.__ModuleLoader__.load({
     const KEY = 'current';
     const DEFAULT_OPACITY = 0.7;
     const MAX_BYTES = 25 * 1024 * 1024;
+    /** Button edge; 10% under the original 28px, and the layout follows it. */
+    const BUTTON_SIZE = 25;
+    const BUTTON_GAP = 8;
 
     /**
      * Panel tint while a wallpaper is on. `--dsw-alias-bg-base` paints the frame
@@ -71,11 +74,11 @@ window.__ModuleLoader__.load({
     };
 
     const CSS = [
-      '.dshwp-btn{position:fixed;top:11px;left:88px;z-index:30;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border:0;border-radius:8px;cursor:pointer;color:#fff;background:linear-gradient(140deg,var(--dsw-static-violet-400,#a78bfa),var(--dsw-static-violet-600,#7c3aed));box-shadow:0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.22);-webkit-app-region:no-drag;transition:filter .12s ease,transform .12s ease}',
-      '.dshwp-btn:hover{filter:brightness(1.12)}',
+      `.dshwp-btn{position:fixed;top:11px;left:88px;z-index:30;display:inline-flex;align-items:center;justify-content:center;width:${BUTTON_SIZE}px;height:${BUTTON_SIZE}px;padding:0;border:0;border-radius:50%;cursor:pointer;color:#fff;background:linear-gradient(140deg,color-mix(in srgb,var(--dsw-static-violet-400,#a78bfa) 80%,#fff),var(--dsw-static-violet-400,#a78bfa));box-shadow:0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.35);-webkit-app-region:no-drag;transition:filter .12s ease,transform .12s ease}`,
+      '.dshwp-btn:hover{filter:brightness(1.07)}',
       '.dshwp-btn:active{transform:scale(.94)}',
       '.dshwp-btn:focus-visible{outline:2px solid var(--dsw-static-violet-400,#a78bfa);outline-offset:2px}',
-      '.dshwp-btn[data-on=true]{box-shadow:0 0 0 2px rgba(167,139,250,.42),0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.22)}',
+      '.dshwp-btn[data-on=true]{box-shadow:0 0 0 2px rgba(196,181,253,.55),0 1px 2px rgba(15,10,30,.35),inset 0 0 0 .5px rgba(255,255,255,.35)}',
       /* The sidebar owns the space the button sits in: collapsed means no brand row. */
       '[data-sidebar-collapsed] .dshwp-btn,[data-sidebar-collapsed] .dshwp-panel{display:none}',
       /* Off macOS there is no safe fallback spot before the brand row is measured. */
@@ -112,7 +115,7 @@ window.__ModuleLoader__.load({
     ].join('\n');
 
     const icon = h('svg', {
-      viewBox: '0 0 16 16', width: 15, height: 15, 'aria-hidden': true, focusable: 'false',
+      viewBox: '0 0 16 16', width: 13.5, height: 13.5, 'aria-hidden': true, focusable: 'false',
     }, h('path', {
       d: 'M2.2 3.1h11.6a.9.9 0 0 1 .9.9v8a.9.9 0 0 1-.9.9H2.2a.9.9 0 0 1-.9-.9v-8a.9.9 0 0 1 .9-.9Z',
       fill: 'none', stroke: 'currentColor', 'stroke-width': 1.3,
@@ -246,8 +249,8 @@ window.__ModuleLoader__.load({
           const anchor = (brand.firstElementChild || brand).getBoundingClientRect();
           const box = row.getBoundingClientRect();
           if (box.width < 140 || anchor.width === 0) return;
-          const left = Math.min(Math.max(anchor.right + 8, box.left + 8), box.right - 36);
-          const top = box.top + Math.max(0, (box.height - 28) / 2);
+          const left = Math.min(Math.max(anchor.right + BUTTON_GAP, box.left + BUTTON_GAP), box.right - (BUTTON_SIZE + BUTTON_GAP));
+          const top = box.top + Math.max(0, (box.height - BUTTON_SIZE) / 2);
           setPos((prev) => (prev && Math.abs(prev.left - left) < 0.5 && Math.abs(prev.top - top) < 0.5 ? prev : { left, top }));
         };
 
@@ -396,7 +399,7 @@ window.__ModuleLoader__.load({
         role: 'dialog',
         'aria-label': t('title'),
         'data-ready': pos ? 'true' : 'false',
-        style: pos ? { left: pos.left + 'px', top: (pos.top + 36) + 'px' } : undefined,
+        style: pos ? { left: pos.left + 'px', top: (pos.top + BUTTON_SIZE + BUTTON_GAP) + 'px' } : undefined,
       }, [
         h('div', { className: 'dshwp-head', key: 'head' }, [
           h('h2', { className: 'dshwp-title', key: 'title' }, t('title')),
