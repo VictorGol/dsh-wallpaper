@@ -28,6 +28,21 @@ window.__ModuleLoader__.load({
       },
     };
 
+    /**
+     * Off macOS the app frame (`AppFrame.module.css`) paints the frame, the
+     * sidebar column and the windows-titlebar strip with
+     * `--dsw-specific-sidebar-fill`, which is opaque there — the darwin layout
+     * mixes that same token down to 40/50% and leaves the frame transparent, so
+     * only macOS can show anything behind the frame. Two of those layers stack
+     * (frame + column), so 30% each lands near the darwin result.
+     */
+    const FRAME_TOKENS = {
+      '--dsw-specific-sidebar-fill': {
+        light: 'color-mix(in srgb, var(--dsw-static-neutral-bluish-50) 30%, transparent)',
+        dark: 'color-mix(in srgb, var(--dsw-static-neutral-bluish-900) 30%, transparent)',
+      },
+    };
+
     const ZH = {
       label: '背景壁纸',
       title: '背景壁纸',
@@ -87,6 +102,13 @@ window.__ModuleLoader__.load({
       '.dshwp-value{flex:none;width:40px;text-align:right;font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-primary)}',
       '.dshwp-hint{margin:10px 0 0;color:var(--dsw-alias-label-tertiary);font-size:11px;line-height:16px}',
       '.dshwp-notice{margin:8px 0 0;color:var(--dsw-alias-state-error-primary);font-size:11px;line-height:16px}',
+      /* The image lives in a child of the layer so the layer itself can keep an
+         opaque, theme-colored base off macOS: there the window is opaque and the
+         frame paints its own fill, so a translucent image would blend with the
+         window instead of with a backdrop. */
+      '.dshwp-image{position:absolute;inset:0;pointer-events:none}',
+      'html:not([data-platform=darwin]) [data-dsh-wallpaper]{background-color:var(--dsw-static-neutral-bluish-00,#fff)}',
+      'html:not([data-platform=darwin]) body[data-ds-dark-theme] [data-dsh-wallpaper]{background-color:var(--dsw-static-neutral-bluish-950,#151517)}',
     ].join('\n');
 
     const icon = h('svg', {
@@ -104,7 +126,7 @@ window.__ModuleLoader__.load({
       return document.querySelector('[data-dsh-wallpaper]');
     }
 
-    /** The full-window image layer, kept as the body's first child and below #root. */
+    /** The full-window layer, kept as the body's first child and below #root. */
     function ensureLayer() {
       let el = layerElement();
       if (el) return el;
@@ -116,15 +138,28 @@ window.__ModuleLoader__.load({
         inset: '0',
         zIndex: '-1',
         pointerEvents: 'none',
-        backgroundColor: 'transparent',
+      });
+      const image = document.createElement('div');
+      image.className = 'dshwp-image';
+      image.setAttribute('data-dsh-wallpaper-image', '');
+      Object.assign(image.style, {
+        position: 'absolute',
+        inset: '0',
         backgroundPosition: 'center',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         opacity: String(DEFAULT_OPACITY),
         transition: 'opacity 180ms ease',
       });
+      el.appendChild(image);
       document.body.insertBefore(el, document.body.firstChild);
       return el;
+    }
+
+    /** The image inside the layer; `ensureLayer` owns its creation. */
+    function imageElement(layer) {
+      const el = layer || layerElement();
+      return el ? el.querySelector('[data-dsh-wallpaper-image]') : null;
     }
 
     function openDb() {
@@ -268,15 +303,19 @@ window.__ModuleLoader__.load({
           if (stale) stale.remove();
           return;
         }
-        const el = ensureLayer();
-        el.style.backgroundImage = 'url("' + url + '")';
-        el.style.opacity = String(opacity);
+        const image = imageElement(ensureLayer());
+        if (!image) return;
+        image.style.backgroundImage = 'url("' + url + '")';
+        image.style.opacity = String(opacity);
       }, [url, opacity]);
 
       useEffect(() => {
         const theme = runtime?.ctx?.theme;
         if (!url || typeof theme?.overrideTokens !== 'function') return;
-        const dispose = theme.overrideTokens('dsh-wallpaper', PANEL_TOKENS);
+        // The frame fill is opaque off macOS and covers the layer; on macOS the
+        // frame is already transparent, so leave that platform untouched.
+        const mac = document.documentElement.dataset.platform === 'darwin';
+        const dispose = theme.overrideTokens('dsh-wallpaper', mac ? PANEL_TOKENS : { ...PANEL_TOKENS, ...FRAME_TOKENS });
         return () => dispose();
       }, [url]);
 
